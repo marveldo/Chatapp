@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href='{% static "css/bootstrap.css" %}'>
+</head>
+<body class="h-75 bg-secondary">
+    <div class=" d-flex justify-content-center align-items-center m-0 h-100"  >
+        <div class="d-block w-50">
+
+        <div class="d-flex justify-content-center my-5">
+           <h1 class="display-6 text-light">Chat!!!</h1>
+        </div>
+        
+        <form action="" method="POST" class="w-100">
+            {% csrf_token %}
+
+            <div class="w-100 my-5">
+                <label class="visually-hidden" for="autoSizingInputGroup">Username</label>
+                <div class="input-group">
+                  <div class="input-group-text">@</div>
+                  <input type="text" class="form-control" id="autoSizingInputGroup" placeholder="Username" name="Username">
+                </div>
+            </div>
+            <div class="w-100">
+                <label class="visually-hidden" for="autoSizingInputGroup">Password</label>
+                <div class="input-group">
+                  <div class="input-group-text">***</div>
+                  <input type="password" class="form-control" id="autoSizingInputGroup" placeholder="Password" name="Password">
+                </div>
+            </div>
+             <div class="d-flex justify-content-center my-4">
+                <div class="d-block text-center">
+
+                
+                <button class="btn btn-outline-light my-3">LOGIN</button>
+                <p>Dont have an account ? <a href="{% url 'Register'%}" class="text-light">Register</a></p>
+            </div>
+             </div>
+            
+        </form>
+    </div>
+</div>
+</body>
+</html>

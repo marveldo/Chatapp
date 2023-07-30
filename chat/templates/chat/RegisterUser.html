@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href='{% static "css/bootstrap.css" %}'>
+</head>
+<body class="h-100 bg-secondary">
+    <div class=" d-flex justify-content-center align-items-center m-0 h-100"  >
+        <div class="d-block w-50">
+
+        <div class="d-flex justify-content-center my-5">
+            <h1 class="dispaly-6 text-light">Chat!!!</h1>
+        </div>
+        
+        <form action="" method="POST" enctype="multipart/form-data" class="w-100">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="w-100 my-3">
+                <label class="my-2"  for="autoSizingInputGroup">{{field.label}} : </label>
+                
+                  
+                 {{field}}
+              
+            </div>
+            {% if field.errors %}
+            {% for error in field.errors %}
+            <p class="text-danger">{{error}}</p>
+            {% endfor %}
+            {% endif %}
+           {% endfor %}
+             <div class="d-flex justify-content-center my-4">
+                {% if page == 'create-post' %}
+                <div class="d-block text-center">
+                    <button class="btn btn-outline-light my-3">Update</button>
+                </div>
+                {% else %}
+                <div class="d-block text-center">
+
+                
+                <button class="btn btn-outline-light my-3">Register</button>
+                <p>Already have an account ? <a href="{% url 'Loginpage' %}" class="text-light">Login</a></p>
+                {% endif %}
+            </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href='{% static "css/bootstrap.min.css" %}'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<script type="text/javascript">
+   let otheruser = '{{profile.user.username}}'
+</script>
+<style>
+    .scroll-container{
+        scrollbar-width: thin;
+        scrollbar-color:black
+    }
+    .scroll-container::-webkit-scrollbar {
+  width: 10px; 
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgb( 64, 64, 64);
+  border-radius: 5px; 
+}
+
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: #555555; 
+}
+.hover:hover{
+        background-color: grey;
+    }
+.d1{
+    display:flex;
+}
+.d2{
+    display:flex;
+    width:75%;
+    overflow-y:auto;
+    background-color: #555555;
+}
+.d3{
+    width:25%;
+
+}
+.message-bar{
+    position:fixed;
+    bottom:0;
+    right: 30;
+    
+    
+    width: 100.5%;
+  
+  padding: 10px;
+  text-align: center;
+}
+a{
+    color:white;
+}
+.top{
+    display: flex;
+    position: fixed;
+    top: 0;
+    right: 30;
+    width:100%;
+    /* width:73.8%; */
+    height:60px;
+   
+}
+.mt-5 {
+    margin-top: 6rem!important;
+}
+.mb-5 {
+    margin-bottom: 8rem!important;
+}
+
+
+@media(max-width:900px){
+    
+    .d2{
+        display:flex;
+        width:100%;
+    }
+    .d3{
+        display:none;
+        width:100%;
+    }
+    .top{
+        width:100%;
+    }
+}
+</style>
+<body class="h-100 bg-dark text-light" >
+   <div class="h-100 m-0 w-100">
+       <div class=" h-100 d1">
+          <div class=" scroll-container p-4 d3" style="overflow: auto; " >
+            <div class="d-block w-100 mb-4">
+                <h1 class="mb-3 d-flex justify-content-center" style="font-size: 30px;">{{request.user.username}} Chats</h1>
+                <div class="d-flex justify-content-center">
+                    <a href="" class="d-flex justify-content-start mt-3 me-5"><i class="bi bi-bell"></i> <p id="count">{{not}}</p></a>
+                    <a class="d-flex justify-content-center mt-3 me-3" href="{% url 'Edit' request.user.profile.id %}">Edit </a>
+                    <a class="d-flex justify-content-end mt-3 ms-3"  href="{% url 'Logout' %}">Logout</a>
+                   
+                </div>
+               
+            </div>
+            
+            <div class="d-block mb-3" >
+               {% for profile in profiles %}
+               <a href="{% url 'Profile' profile.id %}" class="display-6 text-decoration-none d-flex hover">
+                <div class="d-flex border-black justify-content-start w-75 ">
+                    <img src="{{profile.profile_pic.url}}" alt="" class="img-fluid rounded-circle mx-2 mb-3 mt-3" style="height:60px;width:70px; ">
+                    <div class="d-flex align-items-center">
+                        <h2 class="display-6 text-light" style="font-size:22px" >{{profile.user.username}}</h2>
+                    </div>
+                     
+                    
+                </div>
+              
+                
+                
+               
+               </a> 
+
+                {% endfor %}
+             
+            </div>
+          </div >
+        <div class='d2 scroll-container  ' >
+           <div class="top bg-dark">
+            <img src="{{profile.profile_pic.url}}" alt="" class="img-fluid rounded-circle mx-2 mb-3 mt-3" style="height:30px;width:40px; ">
+            <div class="d-flex align-items-center">
+                <div class="d-block">
+                <h2 class="display-6 text-light " style="font-size:22px" >{{profile.user.username}}</h2>
+                {% if profile.isonline %}
+                <p id="online" >Online</p>
+                {% endif %}
+          
+            </div>
+            </div>
+           </div>
+            
+            <div id="message-div" class="d-block mt-5  w-100 ms-2 me-2 mb-5 " style="height: fit-content;" style="margin-top: 40%;">
+                {% for chat in chats %}
+                {% if request.user.username == chat.username %}
+                <div class="d-flex justify-content-end mb-3">
+                {% else %}
+                <div class="d-flex justify-content-start mb-3  ">
+                {% endif %}
+                    <div class="border border-black rounded d-flex" style="background-color: darkgray;">
+                        <p class="me-5">{{chat.message}}</p>
+                        <small class="d-flex align-items-end">{{chat.timestamp}}</small>
+                    </div>
+                   
+                </div>
+                {% endfor %}
+
+                    
+                    <div class="message-bar bg-dark  ">
+
+                    
+                        <form id="form" action="" >
+                            <div class="d-flex">
+                                <input type="text" class="form-control bg-dark text-light" style="width:70%" placeholder="Enter your message" name="message">
+                                <button class="rounded-circle bg-dark text-light" style="width:60px;height:50px;"><i class="bi bi-send"></i></button>
+                            </div>
+                        </form>
+                       </div>
+                </div>
+                </div>
+            </div>
+      
+       </div>
+   </div>
+   {{profile.user.id|json_script:"json-id"}}
+   {{request.user.username|json_script:"message-user-username"}}
+</body>
+<script>
+   let id =JSON.parse(document.getElementById('json-id').textContent)
+   let username = JSON.parse(document.getElementById('message-user-username').textContent)
+   let  url = `ws://${window.location.host}/ws/chat/${id}/`
+   let  form = document.getElementById('form')
+   let messagediv = document.getElementById('message-div')
+  
+   
+    const websocket = new WebSocket(url)
+
+   
+    websocket.onmessage = (e) =>{
+        let textdata = JSON.parse(e.data)
+        console.log(textdata)
+        if (textdata['type'] == 'chat'){
+            if (textdata['username'] == username){
+                messagediv.insertAdjacentHTML('beforeend',`   <div class="d-flex justify-content-end mb-3" >
+                        <div class="border border-black rounded d-flex me" style='background-color : darkgrey'>
+                            <p class="me-5">${textdata['message_sent']}</p>
+                            <small class="d-flex align-items-end"></small>
+                        </div>
+                    </div>`)
+            }
+            else{
+           messagediv.insertAdjacentHTML('beforeend',`
+                    <div class="d-flex justify-content-start mb-3  " >
+                    <div class="border border-black rounded d-flex" style='background-color : darkgrey'>
+                        <p class="me-5">${textdata['message_sent']}</p>
+                        <small class="d-flex align-items-end"></small>
+                    </div>
+                   
+                </div>`)}
+        }
+    }
+    form.addEventListener('submit' , (e)=>{
+       e.preventDefault()
+       let message = e.target.message.value
+       
+       websocket.send(
+        JSON.stringify({
+            'text': message,
+            'username': username,
+            'otherusername': otheruser
+
+
+          })
+       
+       )
+         
+       form.reset()
+    })
+    
+</script>
+<script>
+    let usernameuser = JSON.parse(document.getElementById('message-user-username').textContent)
+    let onlinep = document.getElementById('online')
+    let otherurl = `ws://${window.location.host}/ws/online/`
+    const Online = new WebSocket(otherurl)
+    Online.onopen = (e) =>{
+       Online.send(JSON.stringify({
+          'username':username,
+          'status': 'online'
+       }))
+    }
+    Online.onmessage =(e) =>{
+        message = JSON.parse(e.data)
+        console.log(message)
+        if(message['username'] != usernameuser){
+            let onlinep = document.getElementById('online')
+            if (message['status'] == 'online'){
+
+                onlinep.style.display == 'block'
+            }
+        }
+
+
+
+    }
+    window.addEventListener('beforeunload',(e)=>{
+        Online.send(JSON.stringify({
+            'username':username,
+            'status':'offline'
+        }))
+    })
+</script>
+<script>
+    let noturl = `ws://${window.location.host}/ws/notification/`
+    const notification = new WebSocket(noturl)
+
+    notification.onmessage = (e) =>{
+        data = JSON.parse(e.data)
+        console.log(data)
+        if (data['type'] == 'notification'){
+            let  count = document.getElementById('count')
+            count.innerText = data.count.count
+        }
+    }
+     
+</script>
+</html>
